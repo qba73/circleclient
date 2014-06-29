@@ -8,7 +8,7 @@ import httpretty
 ENDPOINT = 'https://circleci.com/api/v1'
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture()
 def client():
     return circleclient.CircleClient(api_token='token')
 
@@ -49,7 +49,7 @@ def test_list_followed_projects(client):
     httpretty.register_uri(httpretty.GET, url,
         status=200, content_type='application/json',
         body='[{"username": "qba73", ' + 
-            '"reponame": "circleclient", ' + 
+            '"reponame": "nc", ' + 
             '"branches": {"master": {"a": "xcv"}}}]')
 
     builds = client.projects.list_projects()
@@ -60,28 +60,28 @@ def test_list_followed_projects(client):
 
 @pytest.mark.httpretty
 def test_trigger_build(client):
-    url = ENDPOINT + '/project/qba73/circleclient/tree/master?circle-token=token'
+    url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
     httpretty.register_uri(httpretty.POST, url,
         status=201,
         content_type='application/json',
-        body='{"build_num": 54, "reponame": "mongofinil"}')
+        body='{"build_num": 54, "reponame": "nc"}')
 
-    build = client.build.trigger_new('qba73', 'circleclient', 'master')
+    build = client.build.trigger_new('qba73', 'nc', 'master')
 
     assert isinstance(build, dict)
 
 
 @pytest.mark.httpretty
 def test_cancel_build(client):
-    url = ENDPOINT + '/project/qba73/circleclient/54/cancel?circle-token=token'
+    url = ENDPOINT + '/project/qba73/nc/54/cancel?circle-token=token'
 
     httpretty.register_uri(httpretty.POST, url, status=201,
         content_type='application/json',
-        body='{"build_num": 54, "reponame": "mongofinil"}')
+        body='{"build_num": 54, "reponame": "nc"}')
 
-    response = client.build.cancel(username='qba73', project='circleclient',
-                                build_num=54)
+    response = client.build.cancel(username='qba73',
+        project='nc', build_num=54)
 
     assert isinstance(response, dict)
     assert 'reponame'  in response
