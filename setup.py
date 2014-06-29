@@ -14,7 +14,7 @@ except ImportError:
 
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(this_dir, 'README.rst')) as f:
+with open(os.path.join(this_dir, 'README.md')) as f:
     LONG_DESCRIPTION = '\n' + f.read()
 
 
