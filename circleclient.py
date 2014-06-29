@@ -17,11 +17,9 @@ class CircleClient(object):
         self.projects = Projects(self)
         self.build = Build(self)
 
-
     def make_headers(self):
-        headers = {
-            'content-type': 'application/json',
-            'accept': 'application/json'}
+        headers = {'content-type': 'application/json',
+                   'accept': 'application/json'}
         return headers
 
     def make_url(self, url):

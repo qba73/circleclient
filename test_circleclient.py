@@ -1,110 +1,87 @@
 #!/usr/bin/env python
 
-import os
-import unittest
 import circleclient
+import pytest
+import httpretty
 
 
-# set these to run tests
-CIRCLE_API_TOKEN = os.environ.get('CIRCLE_API_TOKEN')
-CIRCLE_TEST_USER_NAME = os.environ.get("CIRCLE_TEST_USER_NAME" )
-CIRCLE_TEST_PROJECT_NAME = os.environ.get('CIRCLE_TEST_PROJECT_NAME')
-CIRCLE_TEST_BRANCH_NAME = os.environ.get('CIRCLE_TEST_BRANCH_NAME')
+ENDPOINT = 'https://circleci.com/api/v1'
 
 
-class TestCircleclient(unittest.TestCase):
-
-    def setUp(self):
-        self.cc = circleclient.CircleClient(
-            api_token=CIRCLE_API_TOKEN)
-
-    def test_has_instances(self):
-        self.assertIsInstance(self.cc.user, circleclient.User)
-        self.assertIsInstance(self.cc.projects, circleclient.Projects)
-        self.assertIsInstance(self.cc.build, circleclient.Build)
-
-    def test_headers(self):
-        headers = self.cc.headers
-        self.assertIsInstance(headers, dict)
-        self.assertIn('content-type', headers)
-        self.assertIn('accept', headers)
-        self.assertIn('application/json', headers['content-type'])
-        self.assertIn('application/json', headers['accept'])
+@pytest.fixture(scope='module')
+def client():
+    return circleclient.CircleClient(api_token='token')
 
 
-class TestUser(unittest.TestCase):
-
-    def setUp(self):
-        self.cc = circleclient.CircleClient(
-            api_token=CIRCLE_API_TOKEN)
-
-    def test_get_info(self):
-        user_info = self.cc.user.get_info()
-        self.assertIsInstance(user_info, dict)
-        self.assertIn('login', user_info)
-        self.assertIn('name', user_info)
-        self.assertIn('all_emails', user_info)
-        self.assertIn('admin', user_info)
-        self.assertIn('github_id', user_info)
-        self.assertIn('selected_email', user_info)
-        self.assertIn('heroku_api_key', user_info)
-        self.assertIn('github_oauth_scopes', user_info)
-        self.assertEqual(user_info["login"], CIRCLE_TEST_USER_NAME)
+def test_client_has_instances(client):
+    assert isinstance(client.user, circleclient.User)
+    assert isinstance(client.projects, circleclient.Projects)
+    assert isinstance(client.build, circleclient.Build)
 
 
-class TestProjects(unittest.TestCase):
-
-    def setUp(self):
-        self.cc = circleclient.CircleClient(
-            api_token=CIRCLE_API_TOKEN)
-
-    def test_list_followed_projects(self):
-        projects = self.cc.projects.list_projects()
-        self.assertIsInstance(projects, list)
+def test_client_headers(client):
+    headers = client.headers
+    assert isinstance(headers, dict)
+    assert 'content-type' in headers
+    assert 'accept' in headers
+    assert 'application/json' == headers['content-type']
+    assert 'application/json' == headers['accept']
 
 
-class TestBuild(unittest.TestCase):
-    
-    def setUp(self):
-        self.cc = circleclient.CircleClient(
-            api_token=CIRCLE_API_TOKEN)
-        
-    def test_trigger_and_cancel_build(self):
-        build = self.cc.build.trigger_new(
-            username=CIRCLE_TEST_USER_NAME,
-            project=CIRCLE_TEST_PROJECT_NAME,
-            branch=CIRCLE_TEST_BRANCH_NAME)
-        self.assertIsInstance(build, dict)
-        self.assertIn('author_name', build)
-        self.assertIn('build_url', build)
-        self.assertIn('build_num', build)
-        self.assertIn('branch', build)
-        self.assertIn('user', build)
-        self.assertIn('subject', build)
-        self.assertIn('status', build)
-        self.assertIn('username', build)
-        self.assertEqual(build["username"], CIRCLE_TEST_USER_NAME)
+@pytest.mark.httpretty
+def test_get_user_info(client):
+    url = ENDPOINT + '/me?circle-token=token'
 
-        build_num = build['build_num']
-        cancel_build = self.cc.build.cancel(
-            username=CIRCLE_TEST_USER_NAME,
-            project=CIRCLE_TEST_PROJECT_NAME,
-            build_num=build_num)
-        self.assertIsInstance(cancel_build, dict)
-        self.assertIn('build_url', cancel_build)
-        self.assertIn('build_num', cancel_build)
-        self.assertIn('username', cancel_build)
-        self.assertIn('reponame', cancel_build)
-        self.assertIn('outcome', cancel_build)
-        self.assertIn('status', cancel_build)
-        self.assertEqual(cancel_build['build_num'], build_num)
-        self.assertEqual(cancel_build['status'], 'canceled')
-        self.assertEqual(cancel_build['reponame'], CIRCLE_TEST_PROJECT_NAME)
-        self.assertEqual(cancel_build['username'], CIRCLE_TEST_USER_NAME)
+    httpretty.register_uri(httpretty.GET, url,
+        status=200, content_type='application/json',
+        body='{"basic_email_prefs": "smart", "login": "qba73"}')
+
+    response = client.user.get_info()
+
+    assert isinstance(response, dict)
+    assert response["login"] == 'qba73'
 
 
-if __name__ == "__main__":
-    if not all((CIRCLE_API_TOKEN, CIRCLE_TEST_USER_NAME,
-        CIRCLE_TEST_PROJECT_NAME, CIRCLE_TEST_BRANCH_NAME)):
-            raise SystemExit("You need to set credentials and test data (token)")
-    unittest.main(verbosity=2)
+@pytest.mark.httpretty
+def test_list_followed_projects(client):
+    url = ENDPOINT + '/projects?circle-token=token'
+
+    httpretty.register_uri(httpretty.GET, url,
+        status=200, content_type='application/json',
+        body='[{"username": "qba73", ' + 
+            '"reponame": "circleclient", ' + 
+            '"branches": {"master": {"a": "xcv"}}}]')
+
+    builds = client.projects.list_projects()
+
+    assert isinstance(builds, list)
+    assert isinstance(builds[0]["branches"], dict)
+
+
+@pytest.mark.httpretty
+def test_trigger_build(client):
+    url = ENDPOINT + '/project/qba73/circleclient/tree/master?circle-token=token'
+
+    httpretty.register_uri(httpretty.POST, url,
+        status=201,
+        content_type='application/json',
+        body='{"build_num": 54, "reponame": "mongofinil"}')
+
+    build = client.build.trigger_new('qba73', 'circleclient', 'master')
+
+    assert isinstance(build, dict)
+
+
+@pytest.mark.httpretty
+def test_cancel_build(client):
+    url = ENDPOINT + '/project/qba73/circleclient/54/cancel?circle-token=token'
+
+    httpretty.register_uri(httpretty.POST, url, status=201,
+        content_type='application/json',
+        body='{"build_num": 54, "reponame": "mongofinil"}')
+
+    response = client.build.cancel(username='qba73', project='circleclient',
+                                build_num=54)
+
+    assert isinstance(response, dict)
+    assert 'reponame'  in response
