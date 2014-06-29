@@ -54,7 +54,7 @@ class User(object):
     def get_info(self):
         """Return information about the user."""
         method = 'GET'
-        url = '/me?circle-token={}'.format(self.client.api_token)
+        url = '/me?circle-token={token}'.format(token=self.client.api_token)
         json_data = self.client.request(method, url)
         return json.loads(json_data)
 
@@ -67,7 +67,7 @@ class Projects(object):
     def list_projects(self):
         """List all followed projects."""
         method = 'GET'
-        url = '/projects?circle-token={}'.format(self.client.api_token)
+        url = '/projects?circle-token={token}'.format(token=self.client.api_token)
         json_data = self.client.request(method, url)
         return json.loads(json_data)
 
