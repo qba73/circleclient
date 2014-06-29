@@ -12,31 +12,25 @@ try:
 except ImportError:
     from distutils.core import setup
 
-
 this_dir = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(this_dir, 'README.md')) as f:
+with open(os.path.join(this_dir, 'README.rst')) as f:
     LONG_DESCRIPTION = '\n' + f.read()
 
 
 from circleclient import __version__
 
 
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
-
-
 setup(
     name='circleclient',
-    version='0.1.0',
-    description='Python client for CircleCI API',
-    long_description=LONG_DESCRIPTION,
+    version=__version__,
     author='Jakub Jarosz',
     author_email='qba73 _at_ postpro.net',
-    url='https://github.com/qba73/circleclient',
+    description='Python client for CircleCI API',
+    long_description=LONG_DESCRIPTION,
+    url='http://github.com/qba73/circleclient',
     py_modules=['circleclient'],
-    license='Apache v2.0',
-    keywords='circleci ci testing',
+    license='MIT',
+    keywords=['circleci', 'circle', 'ci', 'testing', 'qa'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
