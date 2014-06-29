@@ -53,8 +53,5 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-*.pyc
-*.pyo
-
 # Vim
 *.swp
