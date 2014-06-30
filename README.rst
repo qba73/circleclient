@@ -13,6 +13,7 @@ Features
 * Listing followed repositories
 * Starting build
 * Cancelling build
+* Retrying build
 
 Usage
 =====
