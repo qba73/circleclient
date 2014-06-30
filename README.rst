@@ -30,7 +30,8 @@ Retrieve information about User
     client = circleclient.CircleClient(api_token=token)
     
     # Retrieve User data
-    print client.user.get_info()
+    info = client.user.get_info()
+    print(info)
     
 
 List projects followed by the user
@@ -46,7 +47,8 @@ List projects followed by the user
    client = circleclient.CircleClient(api_token=token)
    
    # Retrieve information about projects
-   print client.projects.list_projects()
+   projects = client.projects.list_projects()
+   print(projects)
    
 
 Trigger new build in CircleCI
@@ -77,4 +79,20 @@ Cancel running build
    
    # Cancel build
    client.build.cancel(username='<your_username>', project='<your_project>', build_num=<build_number>)
+
+
+Retry build
+-----------
+
+.. code:: python
+
+   import os
+   import circleclient
    
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(api_token=token)
+   
+   # Rerty build
+   client.build.retry(username='<your_username>', project='<your_project>', build_num=<build_number>)
+
+

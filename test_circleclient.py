@@ -58,30 +58,50 @@ def test_list_followed_projects(client):
     assert isinstance(builds[0]["branches"], dict)
 
 
-@pytest.mark.httpretty
-def test_trigger_build(client):
-    url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
-    httpretty.register_uri(httpretty.POST, url,
-        status=201,
-        content_type='application/json',
-        body='{"build_num": 54, "reponame": "nc"}')
+class TestBuild(object):
 
-    build = client.build.trigger_new('qba73', 'nc', 'master')
+    @pytest.mark.httpretty
+    def test_trigger_build(self, client):
+        url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
-    assert isinstance(build, dict)
+        httpretty.register_uri(httpretty.POST, url,
+            status=201,
+            content_type='application/json',
+            body='{"build_num": 54, "reponame": "nc"}')
 
+        build = client.build.trigger_new('qba73', 'nc', 'master')
+        assert isinstance(build, dict)
 
-@pytest.mark.httpretty
-def test_cancel_build(client):
-    url = ENDPOINT + '/project/qba73/nc/54/cancel?circle-token=token'
+    @pytest.mark.httpretty
+    def test_cancel_build(self, client):
+        url = ENDPOINT + '/project/qba73/nc/54/cancel?circle-token=token'
 
-    httpretty.register_uri(httpretty.POST, url, status=201,
-        content_type='application/json',
-        body='{"build_num": 54, "reponame": "nc"}')
+        httpretty.register_uri(httpretty.POST, url, status=201,
+            content_type='application/json',
+            body='{"build_num": 54, "reponame": "nc"}')
 
-    response = client.build.cancel(username='qba73',
-        project='nc', build_num=54)
+        response = client.build.cancel(username='qba73',
+                                       project='nc',
+                                       build_num=54)
 
-    assert isinstance(response, dict)
-    assert 'reponame'  in response
+        assert isinstance(response, dict)
+        assert 'reponame'  in response
+
+    @pytest.mark.httpretty
+    def test_retry_build(self, client):
+        url = ENDPOINT + '/project/qba73/nc/54/retry?circle-token=token'
+
+        httpretty.register_uri(httpretty.POST, url, status=201,
+            content_type='application/json',
+            body='{"build_num" : 23, "branch" : "master", "retry_of": 53}')
+
+        response = client.build.retry(username='qba73',
+                                      project='nc',
+                                      build_num=54)
+
+        assert isinstance(response, dict)
+        assert 'retry_of' in response
+        assert 'build_num' in response
+        assert 'branch' in response
+

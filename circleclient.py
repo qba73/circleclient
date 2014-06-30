@@ -97,3 +97,12 @@ class Build(object):
         json_data = self.client.request(method, url)
         return json.loads(json_data)
 
+    def retry(self, username, project, build_num):
+        """Retries the build and returns a summary of new build."""
+        method = 'POST'
+        url = '/project/{username}/{project}/{build_num}/retry?circle-token={token}'.format(
+            username=username, project=project, build_num=build_num,
+            token=self.client.api_token)
+        json_data = self.client.request(method, url)
+        return json.loads(json_data)
+
