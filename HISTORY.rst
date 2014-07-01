@@ -7,3 +7,9 @@ History
 ++++++++++++++++++
 
 * First release on PyPI.
+
+
+0.1.1 (2014-30-01)
+++++++++++++++++++
+
+* Add support for retrying builds

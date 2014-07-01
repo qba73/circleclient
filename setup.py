@@ -7,30 +7,24 @@ Setup script for circleclient.
 import os
 import sys
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from distutils.core import setup
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_dir, 'README.rst')) as f:
     LONG_DESCRIPTION = '\n' + f.read()
 
 
-from circleclient import __version__
-
-
 setup(
     name='circleclient',
-    version=__version__,
+    version='0.1.1',
     author='Jakub Jarosz',
-    author_email='qba73 _at_ postpro.net',
+    author_email='qba73@postpro.net',
     description='Python client for CircleCI API',
     long_description=LONG_DESCRIPTION,
-    url='http://github.com/qba73/circleclient',
+    url='http://github.com/qba73/circleclient/',
     py_modules=['circleclient'],
     license='MIT',
-    keywords=['circleci', 'circle', 'ci', 'testing', 'qa'],
+    keywords=['ci', 'testing', 'qa'],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
@@ -46,4 +40,5 @@ setup(
         'Topic :: Software Development :: Testing',
         'Topic :: Software Development :: Quality Assurance'
     ],
+    install_requires=['requests'],
 )
