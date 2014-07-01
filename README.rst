@@ -15,6 +15,15 @@ Features
 * Cancelling build
 * Retrying build
 
+
+Installation
+============
+
+.. code:: python
+
+    pip install circleclient
+
+
 Usage
 =====
 
