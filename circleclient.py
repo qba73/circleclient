@@ -33,7 +33,7 @@ class CircleClient(object):
                 raise Exception(
                     '{status}: {reason}.\nCircleCI Status NOT OK'.format(
                     status=response.status_code, reason=response.reason))
-            return response.content
+            return response.json()
 
         if method == 'POST':
             response = requests.post(self.make_url(url),
@@ -43,7 +43,7 @@ class CircleClient(object):
                 raise Exception(
                     '{status}: {reason}.\nCircleCI Status NOT OK'.format(
                     status=response.status_code, reason=response.reason))
-            return response.content
+            return response.json()
 
 
 class User(object):
@@ -56,7 +56,7 @@ class User(object):
         method = 'GET'
         url = '/me?circle-token={token}'.format(token=self.client.api_token)
         json_data = self.client.request(method, url)
-        return json.loads(json_data)
+        return json_data
 
 
 class Projects(object):
@@ -69,7 +69,7 @@ class Projects(object):
         method = 'GET'
         url = '/projects?circle-token={token}'.format(token=self.client.api_token)
         json_data = self.client.request(method, url)
-        return json.loads(json_data)
+        return json_data
 
 
 class Build(object):
@@ -86,7 +86,7 @@ class Build(object):
             json_data = self.client.request(method, url, data=json.dumps(build_params))
         else:
             json_data = self.client.request(method, url)
-        return json.loads(json_data)
+        return json_data
 
     def cancel(self, username, project, build_num):
         """Cancel the build and return its summary."""
@@ -95,7 +95,7 @@ class Build(object):
             username=username, project=project, build_num=build_num,
             token=self.client.api_token)
         json_data = self.client.request(method, url)
-        return json.loads(json_data)
+        return json_data
 
     def retry(self, username, project, build_num):
         """Retries the build and returns a summary of new build."""
@@ -104,5 +104,5 @@ class Build(object):
             username=username, project=project, build_num=build_num,
             token=self.client.api_token)
         json_data = self.client.request(method, url)
-        return json.loads(json_data)
+        return json_data
 
