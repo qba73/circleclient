@@ -40,8 +40,7 @@ Retrieve information about User
     client = circleclient.CircleClient(api_token=token)
     
     # Retrieve User data
-    info = client.user.get_info()
-    print(info)
+    client.user.get_info()
     
 
 List projects followed by the user
@@ -57,8 +56,7 @@ List projects followed by the user
    client = circleclient.CircleClient(api_token=token)
    
    # Retrieve information about projects
-   projects = client.projects.list_projects()
-   print(projects)
+   client.projects.list_projects()
    
 
 Trigger new build in CircleCI
