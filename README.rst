@@ -9,11 +9,12 @@ Python client library for CircleCI API.
 Features
 ========
 
-* Retrieving information about user
-* Listing followed repositories
-* Starting build
-* Cancelling build
-* Retrying build
+* Retrieve information about user
+* List followed repositories
+* Start build
+* Cancel build
+* Retry build
+* Clear build cache
 
 
 Installation
@@ -103,4 +104,17 @@ Retry build
    # Rerty build
    client.build.retry(username='<your_username>', project='<your_project>', build_num=<build_number>)
 
+Clear build cache
+-----------------
+
+.. code:: python
+
+   import os
+   import circleclient
+
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(api_token=token)
+
+   # Clear build cache
+   client.cache.clear(username='<your_username>', project='<your_project>')
 
