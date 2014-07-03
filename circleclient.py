@@ -16,6 +16,12 @@ class CircleClient(object):
         self.user = User(self)
         self.projects = Projects(self)
         self.build = Build(self)
+        self.cache = Cache(self)
+        self.dispatch = {
+            "GET": self.client_get,
+            "POST": self.client_post,
+            "DELETE": self.client_delete
+        }
 
     def make_headers(self):
         headers = {'content-type': 'application/json',
@@ -26,24 +32,34 @@ class CircleClient(object):
         endpoint = 'https://circleci.com/api/v1'
         return endpoint + url 
 
-    def request(self, method, url, body=None):
-        if method == 'GET':
-            response = requests.get(self.make_url(url), headers=self.headers)
-            if not response.ok:
-                raise Exception(
-                    '{status}: {reason}.\nCircleCI Status NOT OK'.format(
+    def client_get(self, url, **kwargs):
+        response = requests.get(self.make_url(url), headers=self.headers)
+        if not response.ok:
+            raise Exception(
+                '{status}: {reason}.\nCircleCI Status NOT OK'.format(
                     status=response.status_code, reason=response.reason))
-            return response.json()
+        return response.json()
 
-        if method == 'POST':
-            response = requests.post(self.make_url(url),
-                                     data=json.dumps(body),
-                                     headers=self.headers)
-            if not response.ok:
-                raise Exception(
-                    '{status}: {reason}.\nCircleCI Status NOT OK'.format(
+    def client_post(self, url, **kwargs):
+        response = requests.post(self.make_url(url),
+                                 data=json.dumps(kwargs),
+                                 headers=self.headers)
+        if not response.ok:
+            raise Exception(
+                '{status}: {reason}.\nCircleCI Status NOT OK'.format(
                     status=response.status_code, reason=response.reason))
-            return response.json()
+        return response.json()
+
+    def client_delete(self, url, **kwargs):
+        response = requests.delete(self.make_url(url), headers=self.headers) 
+        if not response.ok:
+            raise Exception(
+                '{status}: {reason}.\nCircleCI Status NOT OK'.format(
+                    status=response.status_code, reason=response.reason))
+        return response.json()
+
+    def request(self, method, url, **kwargs):
+        return self.dispatch[method](url, **kwargs)
 
 
 class User(object):
@@ -83,7 +99,8 @@ class Build(object):
         url = '/project/{username}/{project}/tree/{branch}?circle-token={token}'.format(
             username=username, project=project, branch=branch, token=self.client.api_token)
         if build_params is not None:
-            json_data = self.client.request(method, url, data=json.dumps(build_params))
+            data = json.dumps(build_params)
+            json_data = self.client.request(method, url, data=data)
         else:
             json_data = self.client.request(method, url)
         return json_data
@@ -106,3 +123,16 @@ class Build(object):
         json_data = self.client.request(method, url)
         return json_data
 
+
+class Cache(object):
+
+    def __init__(self, client):
+        self.client = client
+
+    def clear(self, username, project):
+        """Clear the cache for a project."""
+        method = 'DELETE'
+        url = '/project/{username}/{project}/build-cache?circle-token={token}'.format(
+            username=username, project=project, token=self.client.api_token)
+        json_data = self.client.request(method, url)
+        return json_data
