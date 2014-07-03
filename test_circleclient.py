@@ -13,50 +13,54 @@ def client():
     return circleclient.CircleClient(api_token='token')
 
 
-def test_client_has_instances(client):
-    assert isinstance(client.user, circleclient.User)
-    assert isinstance(client.projects, circleclient.Projects)
-    assert isinstance(client.build, circleclient.Build)
+class TestClient(object):
+
+    def test_client_has_instances(self, client):
+        assert isinstance(client.user, circleclient.User)
+        assert isinstance(client.projects, circleclient.Projects)
+        assert isinstance(client.build, circleclient.Build)
+
+    def test_client_headers(self, client):
+        headers = client.headers
+        assert isinstance(headers, dict)
+        assert 'content-type' in headers
+        assert 'accept' in headers
+        assert 'application/json' == headers['content-type']
+        assert 'application/json' == headers['accept']
 
 
-def test_client_headers(client):
-    headers = client.headers
-    assert isinstance(headers, dict)
-    assert 'content-type' in headers
-    assert 'accept' in headers
-    assert 'application/json' == headers['content-type']
-    assert 'application/json' == headers['accept']
+class TestUser(object):
+
+    @pytest.mark.httpretty
+    def test_get_user_info(self, client):
+        url = ENDPOINT + '/me?circle-token=token'
+
+        httpretty.register_uri(httpretty.GET, url,
+            status=200, content_type='application/json',
+            body='{"basic_email_prefs": "smart", "login": "qba73"}')
+
+        response = client.user.get_info()
+
+        assert isinstance(response, dict)
+        assert response["login"] == 'qba73'
 
 
-@pytest.mark.httpretty
-def test_get_user_info(client):
-    url = ENDPOINT + '/me?circle-token=token'
+class TestProjects(object):
 
-    httpretty.register_uri(httpretty.GET, url,
-        status=200, content_type='application/json',
-        body='{"basic_email_prefs": "smart", "login": "qba73"}')
+    @pytest.mark.httpretty
+    def test_list_followed_projects(self, client):
+        url = ENDPOINT + '/projects?circle-token=token'
 
-    response = client.user.get_info()
+        httpretty.register_uri(httpretty.GET, url,
+            status=200, content_type='application/json',
+            body='[{"username": "qba73", ' +
+                 '"reponame": "nc", ' +
+                 '"branches": {"master": {"a": "xcv"}}}]')
 
-    assert isinstance(response, dict)
-    assert response["login"] == 'qba73'
+        response = client.projects.list_projects()
 
-
-@pytest.mark.httpretty
-def test_list_followed_projects(client):
-    url = ENDPOINT + '/projects?circle-token=token'
-
-    httpretty.register_uri(httpretty.GET, url,
-        status=200, content_type='application/json',
-        body='[{"username": "qba73", ' + 
-            '"reponame": "nc", ' + 
-            '"branches": {"master": {"a": "xcv"}}}]')
-
-    builds = client.projects.list_projects()
-
-    assert isinstance(builds, list)
-    assert isinstance(builds[0]["branches"], dict)
-
+        assert isinstance(response, list)
+        assert isinstance(response[0]["branches"], dict)
 
 
 class TestBuild(object):
@@ -70,8 +74,9 @@ class TestBuild(object):
             content_type='application/json',
             body='{"build_num": 54, "reponame": "nc"}')
 
-        build = client.build.trigger_new('qba73', 'nc', 'master')
-        assert isinstance(build, dict)
+        response = client.build.trigger_new('qba73', 'nc', 'master')
+
+        assert isinstance(response, dict)
 
     @pytest.mark.httpretty
     def test_cancel_build(self, client):
@@ -104,4 +109,20 @@ class TestBuild(object):
         assert 'retry_of' in response
         assert 'build_num' in response
         assert 'branch' in response
+
+
+class TestCache(object):
+
+    @pytest.mark.httpretty
+    def test_clear_cache(self, client):
+        url = ENDPOINT + '/project/qba73/nc/build-cache?circle-token=token'
+
+        httpretty.register_uri(httpretty.DELETE, url, status=200,
+            content_type='application/json',
+            body='{"status": "build caches deleted"}')
+
+        response = client.cache.clear(username='qba73', project='nc')
+
+        assert isinstance(response, dict)
+        assert 'status' in response
 
