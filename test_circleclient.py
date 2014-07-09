@@ -19,6 +19,7 @@ class TestClient(object):
         assert isinstance(client.user, circleclient.User)
         assert isinstance(client.projects, circleclient.Projects)
         assert isinstance(client.build, circleclient.Build)
+        assert isinstance(client.cache, circleclient.Cache)
 
     def test_client_headers(self, client):
         headers = client.headers
