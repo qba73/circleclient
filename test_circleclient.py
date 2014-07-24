@@ -3,7 +3,7 @@
 import circleclient
 import pytest
 import httpretty
-
+import json
 
 ENDPOINT = 'https://circleci.com/api/v1'
 
@@ -24,10 +24,10 @@ class TestClient(object):
     def test_client_headers(self, client):
         headers = client.headers
         assert isinstance(headers, dict)
-        assert 'content-type' in headers
-        assert 'accept' in headers
-        assert 'application/json' == headers['content-type']
-        assert 'application/json' == headers['accept']
+        assert 'Content-Type' in headers
+        assert 'Accept' in headers
+        assert 'application/json' == headers['Content-Type']
+        assert 'application/json' == headers['Accept']
 
 
 class TestUser(object):
@@ -40,7 +40,7 @@ class TestUser(object):
             status=200, content_type='application/json',
             body='{"basic_email_prefs": "smart", "login": "qba73"}')
 
-        response = client.user.get_info()
+        response = client.user.info()
 
         assert isinstance(response, dict)
         assert response["login"] == 'qba73'
@@ -67,17 +67,36 @@ class TestProjects(object):
 class TestBuild(object):
 
     @pytest.mark.httpretty
-    def test_trigger_build(self, client):
+    def test_trigger_build_without_parameters(self, client):
         url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
         httpretty.register_uri(httpretty.POST, url,
             status=201,
             content_type='application/json',
-            body='{"build_num": 54, "reponame": "nc"}')
+            body='{"build_num": 54, "reponame": "nc", "build_parameters": {}}')
 
-        response = client.build.trigger_new('qba73', 'nc', 'master')
+        response = client.build.trigger('qba73', 'nc', 'master')
 
         assert isinstance(response, dict)
+
+    @pytest.mark.httpretty
+    def test_trigger_build_with_parameters(self, client):
+        url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
+
+        httpretty.register_uri(httpretty.POST, url,
+            status=201,
+            content_type='application/json',
+            body='{"build_num": 54, "reponame": "nc", "build_parameters": {"TEST_PARAM_1": "TP1", "TEST_PARAM_2": "TP2"}}')
+
+        response = client.build.trigger(
+            'qba73', 'nc', 'master',
+            TEST_PARAM_1="TP1", TEST_PARAM_2="TP2"
+        )
+
+        assert isinstance(response, dict)
+        assert isinstance(response["build_parameters"], dict)
+        assert response["build_parameters"]["TEST_PARAM_1"] == "TP1"
+        assert response["build_parameters"]["TEST_PARAM_2"] == "TP2"
 
     @pytest.mark.httpretty
     def test_cancel_build(self, client):
@@ -87,12 +106,12 @@ class TestBuild(object):
             content_type='application/json',
             body='{"build_num": 54, "reponame": "nc"}')
 
-        response = client.build.cancel(username='qba73',
-                                       project='nc',
+        response = client.build.cancel('qba73',
+                                       'nc',
                                        build_num=54)
 
         assert isinstance(response, dict)
-        assert 'reponame'  in response
+        assert 'reponame' in response
 
     @pytest.mark.httpretty
     def test_retry_build(self, client):
@@ -110,6 +129,33 @@ class TestBuild(object):
         assert 'retry_of' in response
         assert 'build_num' in response
         assert 'branch' in response
+    
+    @pytest.mark.httpretty
+    def test_get_build_artifacts_with_artifacts(self, client):
+        url = ENDPOINT + '/project/qba73/nc/34/artifacts?circle-token=token'
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='[{"node_index": 0, "url": "https://circleci.com/gh/circleci/nc/12/artifacts/0/tmp/circle-artifacts.NHQxLku/ball.png"}]')
+
+        response = client.build.artifacts('qba73', 'nc', 34)
+
+        assert isinstance(response, list)
+        assert 'node_index' in response[0]
+        assert 'url' in response[0]
+
+    @pytest.mark.httpretty
+    def test_get_build_artifacts_without_artifacts(self, client):
+        url = ENDPOINT + '/project/qba73/nc/35/artifacts?circle-token=token'
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='[]')
+
+        response = client.build.artifacts(username='qba73', project='nc', build_num=35)
+
+        assert isinstance(response, list)
+        assert response == []
 
 
 class TestCache(object):
