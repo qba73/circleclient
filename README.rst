@@ -12,6 +12,8 @@ Features
 * Retrieve information about user
 * List followed repositories
 * Start build
+* Create parametrized builds
+* List build artifacts
 * Cancel build
 * Retry build
 * Clear build cache
@@ -38,10 +40,10 @@ Retrieve information about User
     
     
     token = os.environ['API_TOKEN']
-    client = circleclient.CircleClient(api_token=token)
+    client = circleclient.CircleClient(token)
     
     # Retrieve User data
-    client.user.get_info()
+    client.user.info()
     
 
 List projects followed by the user
@@ -54,7 +56,7 @@ List projects followed by the user
    
    
    token = os.environ['API_TOKEN']
-   client = circleclient.CircleClient(api_token=token)
+   client = circleclient.CircleClient(token)
    
    # Retrieve information about projects
    client.projects.list_projects()
@@ -69,10 +71,25 @@ Trigger new build in CircleCI
    import circleclient
    
    token = os.environ['API_TOKEN']
-   client = circleclient.CircleClient(api_token=token)
+   client = circleclient.CircleClient(token)
    
    # Trigger build
-   client.build.triger_new(username='<your_username>', project='<your_project>', branch='<branch>')
+   client.build.trigger('<username>', '<project_name>', '<branch>')
+   
+
+Trigger new parametrized build in CircleCI
+------------------------------------------
+
+.. code:: python
+
+   import os
+   import circleclient
+   
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(token)
+   
+   # Trigger parametrized build
+   client.build.trigger('<username>', '<project_name>', '<branch>', '<PARAM1>'='<VAL1>')
    
    
 Cancel running build
@@ -84,10 +101,10 @@ Cancel running build
    import circleclient
    
    token = os.environ['API_TOKEN']
-   client = circleclient.CircleClient(api_token=token)
+   client = circleclient.CircleClient(token)
    
    # Cancel build
-   client.build.cancel(username='<your_username>', project='<your_project>', build_num=<build_number>)
+   client.build.cancel('<username>', '<project_name>', '<build_number>')
 
 
 Retry build
@@ -99,10 +116,26 @@ Retry build
    import circleclient
    
    token = os.environ['API_TOKEN']
-   client = circleclient.CircleClient(api_token=token)
+   client = circleclient.CircleClient(token)
    
    # Rerty build
-   client.build.retry(username='<your_username>', project='<your_project>', build_num=<build_number>)
+   client.build.retry('<username>', '<project_name>', '<build_number>')
+
+
+List build artifacts
+--------------------
+
+.. code:: python
+
+   import os
+   import circleclient
+   
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(token)
+   
+   # List build artifacts
+   client.build.artifacts('<username>', '<project_name>', '<build_number>')
+
 
 Clear build cache
 -----------------
@@ -116,5 +149,5 @@ Clear build cache
    client = circleclient.CircleClient(api_token=token)
 
    # Clear build cache
-   client.cache.clear(username='<your_username>', project='<your_project>')
+   client.cache.clear(username='<username>', project='<project_name>')
 
