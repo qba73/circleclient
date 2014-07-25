@@ -62,8 +62,8 @@ List projects followed by the user
    client.projects.list_projects()
    
 
-Trigger new build in CircleCI
------------------------------
+Trigger new build
+-----------------
 
 .. code:: python
 
@@ -76,9 +76,9 @@ Trigger new build in CircleCI
    # Trigger build
    client.build.trigger('<username>', '<project_name>', '<branch>')
    
-
-Trigger new parametrized build in CircleCI
-------------------------------------------
+ 
+Trigger new parametrized build
+------------------------------
 
 .. code:: python
 
