@@ -1,8 +1,22 @@
+============
 circleclient
 ============
 
 .. image:: https://travis-ci.org/qba73/circleclient.svg?branch=master
     :target: https://travis-ci.org/qba73/circleclient
+    :alt: Travis CI Build Status
+
+.. image:: https://pypip.in/v/circleclient/badge.png
+    :target: https://pypi.python.org/pypi/circleclient
+    :alt: Latest Version
+
+.. image:: https://pypip.in/d/circleclient/badge.png
+    :target: https://pypi.python.org/pypi/circleclient
+    :alt: Downloads
+
+.. image:: https://pypip.in/license/circleclient/badge.png
+    :target: https://pypi.python.org/pypi/circleclient/
+    :alt: License
     
 Python client library for CircleCI API.
 
