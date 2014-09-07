@@ -106,6 +106,15 @@ class Build(object):
             json_data = self.client.request(method, url)
         return json_data
 
+    def status(self, username, project, build_num):
+        """Check the status of a build and return its summary."""
+        method = 'GET'
+        url = '/project/{username}/{project}/{build_num}?circle-token={token}'.format(
+            username=username, project=project, build_num=build_num,
+            token=self.client.api_token)
+        json_data = self.client.request(method, url)
+        return json_data
+
     def cancel(self, username, project, build_num):
         """Cancel the build and return its summary."""
         method = 'POST'
