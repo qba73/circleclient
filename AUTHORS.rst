@@ -10,7 +10,7 @@ Development Lead
 Contributors
 ------------
 
-* Jason Boyles (`@JasonBoyles`)
+* Jason Boyles (`@JasonBoyles`_)
 
 .. _`@qba73`: https://github.com/qba73
 .. _`@JasonBoyles`: https://github.com/JasonBoyles
