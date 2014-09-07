@@ -5,9 +5,9 @@ Credits
 Development Lead
 ----------------
 
-* Jakub Jarosz <qba73 _at_ postpro.net>
+* Jakub Jarosz (@qba73)
 
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Jason Boyles (@JasonBoyles)
