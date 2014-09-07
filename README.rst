@@ -147,7 +147,7 @@ Retry build
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
 
-   # Rerty build
+   # Retry build
    client.build.retry('<username>', '<project_name>', '<build_number>')
 
 
