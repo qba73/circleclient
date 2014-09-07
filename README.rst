@@ -117,7 +117,7 @@ Retrieve build status
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
 
-   # Cancel build
+   # Retrieve build status
    client.build.status('<username>', '<project_name>', '<build_number>')
 
 
