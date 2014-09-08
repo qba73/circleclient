@@ -117,7 +117,7 @@ Retrieve build status
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
 
-   # Cancel build
+   # Retrieve build status
    client.build.status('<username>', '<project_name>', '<build_number>')
 
 
@@ -147,7 +147,7 @@ Retry build
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
 
-   # Rerty build
+   # Retry build
    client.build.retry('<username>', '<project_name>', '<build_number>')
 
 
