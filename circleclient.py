@@ -141,6 +141,14 @@ class Build(object):
         json_data = self.client.request('GET', url)
         return json_data
 
+    def recent(self, username, project):
+        """Get status of recent builds."""
+        method = 'GET'
+        url = '/project/{username}/{project}?circle-token={token}'.format(
+            username=username, project=project, token=self.client.api_token)
+        json_data = self.client.request(method, url)
+        return json_data
+
 
 class Cache(object):
 
