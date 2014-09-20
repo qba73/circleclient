@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import circleclient
 import pytest
 import httpretty
 import json
+
 
 ENDPOINT = 'https://circleci.com/api/v1'
 
@@ -67,7 +68,7 @@ class TestProjects(object):
 class TestBuild(object):
 
     @pytest.mark.httpretty
-    def test_trigger_build_without_parameters(self, client):
+    def test_trigger_without_parameters(self, client):
         url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
         httpretty.register_uri(httpretty.POST, url,
@@ -80,7 +81,7 @@ class TestBuild(object):
         assert isinstance(response, dict)
 
     @pytest.mark.httpretty
-    def test_trigger_build_with_parameters(self, client):
+    def test_trigger_with_parameters(self, client):
         url = ENDPOINT + '/project/qba73/nc/tree/master?circle-token=token'
 
         httpretty.register_uri(httpretty.POST, url,
@@ -99,7 +100,7 @@ class TestBuild(object):
         assert response["build_parameters"]["TEST_PARAM_2"] == "TP2"
 
     @pytest.mark.httpretty
-    def test_cancel_build(self, client):
+    def test_cancel(self, client):
         url = ENDPOINT + '/project/qba73/nc/54/cancel?circle-token=token'
 
         httpretty.register_uri(httpretty.POST, url, status=201,
@@ -156,6 +157,64 @@ class TestBuild(object):
 
         assert isinstance(response, list)
         assert response == []
+
+    @pytest.mark.httpretty
+    def test_recent_all_projects(self, client):
+        url = ENDPOINT + '/recent-builds?circle-token=token&limit=3&offset=0'
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='[{"username": "qba73", "reponame": "nc", "outcome": "failed"}]')
+
+        response = client.build.recent_all_projects(limit=3)
+        assert isinstance(response, list)
+        assert 'username' in response[0]
+        assert 'reponame' in response[0]
+        assert 'outcome' in response[0]
+
+    @pytest.mark.httpretty
+    def test_recent_without_branch(self, client):
+        url = ENDPOINT + '/project/qba73/nc?circle-token=token&limit=1&offset=0'
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='[{"username": "qba73", "reponame": "nc", "outcome": "failed"}]')
+
+        response = client.build.recent(username="qba73", project="nc")
+        assert isinstance(response, list)
+        assert len(response) == 1
+        assert isinstance(response[0], dict)
+
+    @pytest.mark.httpretty
+    def test_recent_with_branch(self, client):
+        url = (ENDPOINT +
+               '/project/qba73/nc/tree/master?circle-token=token&limit=1&offset=0')
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='[{"branch": "master"}]')
+
+        response = client.build.recent(username="qba73", project="nc", branch='master')
+        assert isinstance(response, list)
+        assert isinstance(response[0], dict)
+        assert 'branch' in response[0]
+
+
+
+
+    @pytest.mark.httpretty
+    def test_status(self, client):
+        url = ENDPOINT + '/project/qba73/nc/32?circle-token=token'
+
+        httpretty.register_uri(httpretty.GET, url, status=200,
+            content_type='application/json',
+            body='{"username": "qba73", "reponame": "nc", "outcome": "failed"}')
+
+        response = client.build.status(username="qba73", project="nc", build_num=32)
+        assert isinstance(response, dict)
+        assert 'username' in response
+        assert 'reponame' in response
+        assert 'outcome' in response
 
 
 class TestCache(object):
