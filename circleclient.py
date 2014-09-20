@@ -1,6 +1,5 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-import os
 import json
 import requests
 
@@ -9,7 +8,11 @@ __version__ = '0.1.3'
 
 
 class CircleClient(object):
+    """Represents CircleCI client.
 
+    Attributes:
+        api_token: CircleCI API token for the client.
+    """
     def __init__(self, api_token=None):
         self.api_token = api_token
         self.headers = self.make_headers()
@@ -32,6 +35,7 @@ class CircleClient(object):
         return endpoint + path
 
     def client_get(self, url, **kwargs):
+        """Send GET request with given url."""
         response = requests.get(self.make_url(url), headers=self.headers)
         if not response.ok:
             raise Exception(
@@ -40,6 +44,7 @@ class CircleClient(object):
         return response.json()
 
     def client_post(self, url, **kwargs):
+        """Send POST request with given url and keyword args."""
         response = requests.post(self.make_url(url),
                                  data=json.dumps(kwargs),
                                  headers=self.headers)
@@ -50,6 +55,7 @@ class CircleClient(object):
         return response.json()
 
     def client_delete(self, url, **kwargs):
+        """Send POST request with given url."""
         response = requests.delete(self.make_url(url), headers=self.headers)
         if not response.ok:
             raise Exception(
@@ -62,12 +68,17 @@ class CircleClient(object):
 
 
 class User(object):
+    """Represent a CircleCI authenticated user.
+
+    Attributes:
+        client: An instance of CircleClient object.
+    """
 
     def __init__(self, client):
         self.client = client
 
     def info(self):
-        """Return information about the user."""
+        """Return information about the user as a dictionary."""
         method = 'GET'
         url = '/me?circle-token={token}'.format(token=self.client.api_token)
         json_data = self.client.request(method, url)
@@ -75,12 +86,16 @@ class User(object):
 
 
 class Projects(object):
+    """Represent a project in CircleCI.
 
+    Attributes:
+        client: An instance of CircleClient object.
+    """
     def __init__(self, client):
         self.client = client
 
     def list_projects(self):
-        """List all followed projects."""
+        """Return a list of all followed projects."""
         method = 'GET'
         url = '/projects?circle-token={token}'.format(
             token=self.client.api_token)
@@ -94,58 +109,115 @@ class Build(object):
         self.client = client
 
     def trigger(self, username, project, branch, **build_params):
-        """Trigger new build and returns a summary of the build."""
-
+        """Trigger new build and return a summary of the build."""
         method = 'POST'
-        url = '/project/{username}/{project}/tree/{branch}?circle-token={token}'.format(
-            username=username, project=project, branch=branch, token=self.client.api_token)
+        url = ('/project/{username}/{project}/tree/{branch}?'
+               'circle-token={token}'.format(
+                   username=username, project=project,
+                   branch=branch, token=self.client.api_token))
 
         if build_params is not None:
-            json_data = self.client.request(method, url, build_parameters=build_params)
+            json_data = self.client.request(method, url,
+                                            build_parameters=build_params)
         else:
             json_data = self.client.request(method, url)
-        return json_data
-
-    def status(self, username, project, build_num):
-        """Check the status of a build and return its summary."""
-        method = 'GET'
-        url = '/project/{username}/{project}/{build_num}?circle-token={token}'.format(
-            username=username, project=project, build_num=build_num,
-            token=self.client.api_token)
-        json_data = self.client.request(method, url)
         return json_data
 
     def cancel(self, username, project, build_num):
         """Cancel the build and return its summary."""
         method = 'POST'
-        url = '/project/{username}/{project}/{build_num}/cancel?circle-token={token}'.format(
-            username=username, project=project, build_num=build_num,
-            token=self.client.api_token)
+        url = ('/project/{username}/{project}/{build_num}/cancel?'
+               'circle-token={token}'.format(username=username,
+                                             project=project,
+                                             build_num=build_num,
+                                             token=self.client.api_token))
         json_data = self.client.request(method, url)
         return json_data
 
     def retry(self, username, project, build_num):
-        """Retries the build and returns a summary of new build."""
+        """Retry the build and return a summary of the new build."""
         method = 'POST'
-        url = '/project/{username}/{project}/{build_num}/retry?circle-token={token}'.format(
-            username=username, project=project, build_num=build_num,
-            token=self.client.api_token)
+        url = ('/project/{username}/{project}/{build_num}/retry?'
+               'circle-token={token}'.format(username=username,
+                                             project=project,
+                                             build_num=build_num,
+                                             token=self.client.api_token))
         json_data = self.client.request(method, url)
         return json_data
 
     def artifacts(self, username, project, build_num):
-        """List the artifacts produced by a given build."""
-        url = '/project/{username}/{project}/{build_num}/artifacts?circle-token={token}'.format(
-            username=username, project=project, build_num=build_num,
-            token=self.client.api_token)
-        json_data = self.client.request('GET', url)
+        """Return artifacts produced by given build.
+
+        Return information about artifacts as a list of dictionaries.
+        """
+        method = 'GET'
+        url = ('/project/{username}/{project}/{build_num}/artifacts?'
+               'circle-token={token}'.format(username=username,
+                                             project=project,
+                                             build_num=build_num,
+                                             token=self.client.api_token))
+        json_data = self.client.request(method, url)
         return json_data
 
-    def recent(self, username, project):
-        """Get status of recent builds."""
+    def status(self, username, project, build_num):
+        """Return summary of given build number."""
         method = 'GET'
-        url = '/project/{username}/{project}?circle-token={token}'.format(
-            username=username, project=project, token=self.client.api_token)
+        url = ('/project/{username}/{project}/{build_num}?'
+               'circle-token={token}'.format(username=username,
+                                             project=project,
+                                             build_num=build_num,
+                                             token=self.client.api_token))
+        json_data = self.client.request(method, url)
+        return json_data
+
+    def recent_all_projects(self, limit=30, offset=0):
+        """Return information about recent builds across all projects.
+
+        Args:
+            limit (int), Number of builds to return, max=100, defaults=30.
+            offset (int): Builds returned from this point, default=0.
+
+        Returns:
+            A list of dictionaries.
+        """
+        method = 'GET'
+        url = ('/recent-builds?circle-token={token}&limit={limit}&'
+               'offset={offset}'.format(token=self.client.api_token,
+                                        limit=limit,
+                                        offset=offset))
+        json_data = self.client.request(method, url)
+        return json_data
+
+    def recent(self, username, project, limit=1, offset=0, branch=None):
+        """Return status of recent builds for given project.
+
+        Retrieves build statuses for given project and branch. If branch is
+        None it retrieves most recent build.
+
+        Args:
+             username (str): Name of the user.
+             project (str): Name of the project.
+             limit (int): Number of builds to return, default=1, max=100.
+             offset (int): Returns builds starting from given offset.
+             branch (str): Optional branch name as string. If specified only
+                 builds from given branch are returned.
+
+        Returns:
+            A list of dictionaries with information about each build.
+        """
+        method = 'GET'
+        if branch is not None:
+            url = ('/project/{username}/{project}/tree/{branch}?'
+                   'circle-token={token}&limit={limit}&offset={offset}'.format(
+                       username=username, project=project, branch=branch,
+                       token=self.client.api_token, limit=limit,
+                       offset=offset))
+        else:
+            url = ('/project/{username}/{project}?'
+                   'circle-token={token}&limit={limit}&offset={offset}'.format(
+                       username=username, project=project,
+                       token=self.client.api_token, limit=limit,
+                       offset=offset))
         json_data = self.client.request(method, url)
         return json_data
 
@@ -156,9 +228,11 @@ class Cache(object):
         self.client = client
 
     def clear(self, username, project):
-        """Clear the cache for a project."""
+        """Clear the cache for given project."""
         method = 'DELETE'
-        url = '/project/{username}/{project}/build-cache?circle-token={token}'.format(
-            username=username, project=project, token=self.client.api_token)
+        url = ('/project/{username}/{project}/build-cache?'
+               'circle-token={token}'.format(username=username,
+                                             project=project,
+                                             token=self.client.api_token))
         json_data = self.client.request(method, url)
         return json_data
