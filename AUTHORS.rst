@@ -2,13 +2,11 @@
 Credits
 =======
 
-Development Lead
-----------------
+**Development Lead**
 
-* Jakub Jarosz <qba73@postpro.net>
+* Jakub Jarosz (`@qba73`_)
 
-Contributors
-------------
+**Contributors**
 
 * Jason Boyles (`@JasonBoyles`_)
 
