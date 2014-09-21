@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import circleclient
+from circleclient import circleclient
 import pytest
 import httpretty
 

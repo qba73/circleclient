@@ -50,7 +50,7 @@ Retrieve information about User
 .. code:: python
 
     import os
-    import circleclient
+    from circleclient import circleclient
 
 
     token = os.environ['API_TOKEN']
@@ -66,7 +66,7 @@ List projects followed by the user
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
 
    token = os.environ['API_TOKEN']
@@ -82,7 +82,7 @@ Trigger new build
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -97,7 +97,7 @@ Trigger new parametrized build
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -112,7 +112,7 @@ Cancel running build
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -127,7 +127,7 @@ Retry build
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -142,7 +142,7 @@ List build artifacts
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -157,7 +157,7 @@ Retrieve build status
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -172,7 +172,7 @@ Retrieve information about builds across all projects
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -189,7 +189,7 @@ Retrieve information about recent build(s)
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(token)
@@ -211,11 +211,10 @@ Clear build cache
 .. code:: python
 
    import os
-   import circleclient
+   from circleclient import circleclient
 
    token = os.environ['API_TOKEN']
    client = circleclient.CircleClient(api_token=token)
 
    # Clear build cache
    client.cache.clear(username='<username>', project='<project_name>')
-
