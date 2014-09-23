@@ -14,6 +14,7 @@ Contents:
 
    installation
    usage
+   contributing
    authors
    history
 
