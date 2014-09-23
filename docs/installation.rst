@@ -2,12 +2,17 @@
 Installation
 ============
 
-At the command line either via easy_install or pip::
+At the command line either via pip::
 
-    $ easy_install circleclient
     $ pip install circleclient
 
-Or, if you have virtualenvwrapper installed::
+If you have virtualenvwrapper installed::
 
     $ mkvirtualenv circleclient
+    $ pip install circleclient
+
+Or, if you have virtualenv installed::
+
+    $ virtualenv circleclient-venv
+    $ source circleclient-venv/bin/activate
     $ pip install circleclient
