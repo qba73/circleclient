@@ -25,6 +25,7 @@ Features
 
 * Retrieve information about user
 * List followed repositories
+* Return status of recent builds for given project
 * Start build
 * Create parametrized builds
 * List build artifacts
@@ -203,6 +204,38 @@ Retrieve information about recent build(s)
 
    # Retrieve last build of branch develop
    client.build.recent('<username>', '<project>', branch='develop')
+
+
+Retrieve filtered information about recent build(s)
+---------------------------------------------------
+
+.. code:: python
+
+   import os
+   from circleclient import circleclient
+
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(token)
+
+   # Retrieve build status and filter results
+   client.build.recent('<username>',
+                       '<project>',
+                       branch='master',
+                       status_filter='completed')
+
+   client.build.recent('<username>',
+                       '<project>',
+                       branch='develop',
+                       status_filter='successful')
+
+   client.build.recent('<username>',
+                       '<project>',
+                       limit=10,
+                       status_filter='failed')
+
+   client.build.recent('<username>',
+                       '<project>',
+                       status_filter='running') 
 
 
 Clear build cache
