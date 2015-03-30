@@ -3,6 +3,12 @@
 History
 -------
 
+0.1.5 (2015-31-03)
+++++++++++++++++++
+
+* Filter recent builds by build status: completed, successful, failed, running
+
+
 0.1.4 (2014-21-09)
 ++++++++++++++++++
 
