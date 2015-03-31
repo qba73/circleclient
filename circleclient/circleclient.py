@@ -4,7 +4,7 @@ import json
 import requests
 
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 class CircleClient(object):
@@ -188,7 +188,7 @@ class Build(object):
         json_data = self.client.request(method, url)
         return json_data
 
-    def recent(self, username, project, limit=1, offset=0, branch=None, filter=""):
+    def recent(self, username, project, limit=1, offset=0, branch=None, status_filter=""):
         """Return status of recent builds for given project.
 
         Retrieves build statuses for given project and branch. If branch is
@@ -201,7 +201,7 @@ class Build(object):
              offset (int): Returns builds starting from given offset.
              branch (str): Optional branch name as string. If specified only
                  builds from given branch are returned.
-             filter (str): Restricts which builds are returned. Set to 
+             status_filter (str): Restricts which builds are returned. Set to 
                  "completed", "successful", "failed", "running", or defaults 
                  to no filter.
 
@@ -211,16 +211,16 @@ class Build(object):
         method = 'GET'
         if branch is not None:
             url = ('/project/{username}/{project}/tree/{branch}?'
-                   'circle-token={token}&limit={limit}&offset={offset}&filter={filter}'.format(
+                   'circle-token={token}&limit={limit}&offset={offset}&filter={status_filter}'.format(
                        username=username, project=project, branch=branch,
                        token=self.client.api_token, limit=limit,
-                       offset=offset, filter=filter))
+                       offset=offset, status_filter=status_filter))
         else:
             url = ('/project/{username}/{project}?'
-                   'circle-token={token}&limit={limit}&offset={offset}&filter={filter}'.format(
+                   'circle-token={token}&limit={limit}&offset={offset}&filter={status_filter}'.format(
                        username=username, project=project,
                        token=self.client.api_token, limit=limit,
-                       offset=offset, filter=filter))
+                       offset=offset, status_filter=status_filter))
         json_data = self.client.request(method, url)
         return json_data
 

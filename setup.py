@@ -19,7 +19,7 @@ with open(os.path.join(this_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='circleclient',
-    version='0.1.4',
+    version='0.1.5',
     author='Jakub Jarosz',
     author_email='qba73@postpro.net',
     description='Python client for CircleCI API',
