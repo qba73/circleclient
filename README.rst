@@ -10,16 +10,13 @@ circleclient
     :target: https://pypi.python.org/pypi/circleclient
     :alt: Latest Version
 
-.. image:: https://pypip.in/d/circleclient/badge.png
-    :target: https://pypi.python.org/pypi/circleclient
-    :alt: Downloads
-
 .. image:: https://pypip.in/license/circleclient/badge.png
     :target: https://pypi.python.org/pypi/circleclient/
     :alt: License
-    
+
 .. image:: https://pypip.in/d/circleclient/badge.png
     :target: https://crate.io/packages/circleclient?version=latest
+    :alt: Downloads
 
 
 Python client library for CircleCI API.
