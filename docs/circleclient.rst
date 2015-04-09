@@ -12,14 +12,6 @@ circleclient.circleclient module
     :undoc-members:
     :show-inheritance:
 
-circleclient.config module
---------------------------
-
-.. automodule:: circleclient.config
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------
