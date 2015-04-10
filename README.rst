@@ -18,6 +18,9 @@ circleclient
     :target: https://crate.io/packages/circleclient?version=latest
     :alt: Downloads
 
+.. image:: https://readthedocs.org/projects/circleclient/badge/?version=latest
+    :target: https://readthedocs.org/projects/circleclient/?badge=latest
+    :alt: Documentation Status
 
 
 Python client library for CircleCI API.
