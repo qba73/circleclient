@@ -256,3 +256,18 @@ Clear build cache
 
    # Clear build cache
    client.cache.clear(username='<username>', project='<project_name>')
+
+
+Use a custom CircleCI endpoint
+------------------------------
+
+.. code:: python
+
+   import os
+   from circleclient import circleclient
+
+   token = os.environ['API_TOKEN']
+   client = circleclient.CircleClient(api_token=token, endpoint='https://cci.example.com/api/v1')
+
+   # Use client as normal
+   client.user.info()
