@@ -13,8 +13,9 @@ class CircleClient(object):
     Attributes:
         api_token: CircleCI API token for the client.
     """
-    def __init__(self, api_token=None):
+    def __init__(self, api_token=None, endpoint=None):
         self.api_token = api_token
+        self.endpoint = 'https://circleci.com/api/v1' if endpoint is None else endpoint
         self.headers = self.make_headers()
         self.user = User(self)
         self.projects = Projects(self)
@@ -31,8 +32,7 @@ class CircleClient(object):
                 'Accept': 'application/json'}
 
     def make_url(self, path):
-        endpoint = 'https://circleci.com/api/v1'
-        return endpoint + path
+        return self.endpoint + path
 
     def client_get(self, url, **kwargs):
         """Send GET request with given url."""
