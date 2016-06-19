@@ -15,7 +15,7 @@ circleclient
     :alt: License
 
 .. image:: https://readthedocs.org/projects/circleclient/badge/?version=latest
-    :target: https://readthedocs.org/projects/circleclient/?badge=latest
+    :target: http://circleclient.readthedocs.io/en/latest/
     :alt: Documentation Status
 
 
