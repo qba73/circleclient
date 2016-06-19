@@ -14,10 +14,6 @@ circleclient
     :target: https://pypi.python.org/pypi/circleclient/
     :alt: License
 
-.. image:: https://pypip.in/d/circleclient/badge.png
-    :target: https://crate.io/packages/circleclient?version=latest
-    :alt: Downloads
-
 .. image:: https://readthedocs.org/projects/circleclient/badge/?version=latest
     :target: https://readthedocs.org/projects/circleclient/?badge=latest
     :alt: Documentation Status
