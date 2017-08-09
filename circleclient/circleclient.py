@@ -15,7 +15,7 @@ class CircleClient(object):
     """
     def __init__(self, api_token=None, endpoint=None):
         self.api_token = api_token
-        self.endpoint = 'https://circleci.com/api/v1' if endpoint is None else endpoint
+        self.endpoint = 'https://circleci.com/api/v1.1' if endpoint is None else endpoint
         self.headers = self.make_headers()
         self.user = User(self)
         self.projects = Projects(self)
