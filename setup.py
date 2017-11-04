@@ -23,7 +23,7 @@ setup(
     name='circleclient',
     version='0.1.6',
     author='Jakub Jarosz',
-    author_email='qba73@postpro.net',
+    author_email='jakub.jarosz@postpro.net',
     description='Python client for CircleCI API',
     long_description=readme + '\n\n' + doclink + '\n\n' + history,
     url='http://github.com/qba73/circleclient/',
@@ -47,6 +47,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Testing',
         'Topic :: Software Development :: Quality Assurance'
     ],
