@@ -5,7 +5,7 @@ import pytest
 import httpretty
 
 
-ENDPOINT = 'https://circleci.com/api/v1'
+ENDPOINT = "https://circleci.com/api/v1.1"
 
 
 @pytest.fixture()
